@@ -1,0 +1,63 @@
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: kuma
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kuma-volume
+  namespace: kuma
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: kuma
+  namespace: kuma
+  labels:
+    app: kuma
+    name: kuma
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kuma
+      task: monitoring
+  template:
+    metadata:
+      labels:
+        app: kuma
+        task: monitoring
+    spec:
+      containers:
+        - name: whoami
+          image: louislam/uptime-kuma:1
+          ports:
+            - containerPort: 3001
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: kuma-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kuma
+  namespace: kuma
+spec:
+  ports:
+    - name: http
+      port: 3001
+  selector:
+    app: kuma
+    task: monitoring

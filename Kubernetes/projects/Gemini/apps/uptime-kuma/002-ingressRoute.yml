@@ -1,0 +1,14 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kuma-ingress
+  namespace: kuma
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`kuma.local.tpeterson.io`)
+    kind: Rule
+    services:
+    - name: kuma
+      port: 3001
