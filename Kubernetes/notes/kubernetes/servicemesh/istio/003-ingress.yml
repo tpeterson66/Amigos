@@ -1,0 +1,39 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: app1-nginx-gateway
+  # namespace: app1
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - nginx.app.cluster.io
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: nginx-service
+  # namespace: app1
+spec:
+  hosts:
+  - nginx.app.cluster.io
+  gateways:
+  - app1-nginx-gateway
+  http:
+    - name: nginx-test
+      match:
+      - uri:
+          exact: /test
+      rewrite:
+        uri: "/"
+      route:
+      - destination:
+          host: mysite-nginx-service
+          port:
+            number: 80

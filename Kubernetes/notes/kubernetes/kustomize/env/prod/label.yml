@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: example
+  labels:
+    environment: production
+    istio-injection: enabled
