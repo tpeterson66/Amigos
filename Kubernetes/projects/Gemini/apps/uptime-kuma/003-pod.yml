@@ -55,6 +55,7 @@ metadata:
   name: kuma
   namespace: kuma
 spec:
+  type: LoadBalancer
   ports:
     - name: http
       port: 3001
